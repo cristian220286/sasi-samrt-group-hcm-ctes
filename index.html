@@ -565,12 +565,12 @@
                     if (!validateSku(sku) || isNaN(stock)) {
                         let errorMessage = '';
                         if (!validateSku(sku)) {
-                            errorMessage += 'SKU inválido. ';
+                            errorMessage += `SKU inválido: "${sku}". `;
                         }
                         if (isNaN(stock)) {
-                            errorMessage += 'Stock no es un número. ';
+                            errorMessage += `Stock inválido: "${cols[1] || 'N/A'}". `;
                         }
-                        skusWithErrors.push({ sku: sku || 'N/A', line: index + 1, error: errorMessage.trim(), originalLine: line });
+                        skusWithErrors.push({ originalLine: line, error: errorMessage.trim() });
                         return null;
                     }
                     return { sku, stock };
@@ -794,9 +794,26 @@
             const name = correctionAdminNameInput.value.trim();
             const submitButton = e.target.querySelector('button[type="submit"]');
             
-            if (!validateSku(sku) || quantity < 0 || isNaN(quantity) || !name) {
-                showToast("Datos de corrección inválidos.", true);
+            if (!validateSku(sku)) {
+                correctionSkuInput.classList.add('invalid');
+                showToast("SKU inválido.", true);
                 return;
+            } else {
+                correctionSkuInput.classList.remove('invalid');
+            }
+            if (quantity < 0 || isNaN(quantity)) {
+                correctionQuantityInput.classList.add('invalid');
+                showToast("Cantidad debe ser 0 o mayor.", true);
+                return;
+            } else {
+                correctionQuantityInput.classList.remove('invalid');
+            }
+            if (!name) {
+                correctionAdminNameInput.classList.add('invalid');
+                showToast("Debe ingresar su nombre para auditoría.", true);
+                return;
+            } else {
+                correctionAdminNameInput.classList.remove('invalid');
             }
             
             toggleButton(submitButton, false);
@@ -841,9 +858,26 @@
             const name = cancellationAdminNameInput.value.trim();
             const submitButton = e.target.querySelector('button[type="submit"]');
 
-            if (!validateSku(sku) || quantity <= 0 || isNaN(quantity) || !name) {
-                showToast("Datos de anulación inválidos.", true);
+            if (!validateSku(sku)) {
+                cancellationSkuInput.classList.add('invalid');
+                showToast("SKU inválido.", true);
                 return;
+            } else {
+                cancellationSkuInput.classList.remove('invalid');
+            }
+            if (quantity <= 0 || isNaN(quantity)) {
+                cancellationQuantityInput.classList.add('invalid');
+                showToast("Cantidad debe ser mayor que cero.", true);
+                return;
+            } else {
+                cancellationQuantityInput.classList.remove('invalid');
+            }
+            if (!name) {
+                cancellationAdminNameInput.classList.add('invalid');
+                showToast("Debe ingresar su nombre para auditoría.", true);
+                return;
+            } else {
+                cancellationAdminNameInput.classList.remove('invalid');
             }
 
             toggleButton(submitButton, false);
@@ -877,6 +911,13 @@
             if (!file || !name) {
                 showToast("Debe seleccionar un archivo y especificar su nombre.", true);
                 return;
+            }
+            if (!name) {
+                repoAdminNameInput.classList.add('invalid');
+                showToast("Debe ingresar su nombre para auditoría.", true);
+                return;
+            } else {
+                repoAdminNameInput.classList.remove('invalid');
             }
 
             toggleButton(submitButton, false);
